@@ -1,0 +1,21 @@
+[Unit]
+Description=An open source platform for continuous inspection of code quality
+Documentation=http://www.sonarqube.org
+Wants=network.target
+After=network.target
+
+[Service]
+Type=forking
+User={{ sonar_system_user }}
+Group={{ sonar_system_user }}
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=sonarqube
+RuntimeDirectory=sonarqube
+LimitNOFILE=65536
+LimitNPROC=2048
+ExecStart=/home/{{ sonar_system_user }}/sonarqube-7.7/bin/linux-x86-64/sonar.sh start
+ExecStop=/home/{{ sonar_system_user }}/sonarqube-7.7/bin/linux-x86-64/sonar.sh stop
+
+[Install]
+WantedBy=multi-user.target

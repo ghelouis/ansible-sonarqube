@@ -1,0 +1,31 @@
+---
+
+- name: create the system user for running SonarQube
+  user:
+    name: "{{ sonar_system_user }}"
+
+- name: download SonarQube
+  unarchive:
+    src: "https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.7.zip"
+    dest: "/home/{{ sonar_system_user }}"
+    remote_src: yes
+    owner: "{{ sonar_system_user }}"
+    group: "{{ sonar_system_user }}"
+
+- name: setup config
+  template:
+    src: "sonar.properties.j2"
+    dest: "/home/{{ sonar_system_user }}/sonarqube-7.7/conf/sonar.properties"
+    owner: "{{ sonar_system_user }}"
+    group: "{{ sonar_system_user }}"
+
+- name: setup daemon
+  template:
+    src: "sonarqube.service.j2"
+    dest: "/etc/systemd/system/sonarqube.service"
+
+- name: start daemon
+  systemd:
+    name: sonarqube
+    daemon_reload: yes
+    state: started

@@ -1,0 +1,28 @@
+---
+
+- name: install nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: remove nginx default page
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: copy sonar server block to nginx
+  copy:
+    src: sonar_server_block
+    dest: /etc/nginx/sites-available/sonar
+
+- name: symlink sonar server block to active nginx sites
+  file:
+    src: /etc/nginx/sites-available/sonar
+    dest: /etc/nginx/sites-enabled/sonar
+    state: link
+
+- name: start nginx
+  systemd:
+    name: nginx
+    state: started
